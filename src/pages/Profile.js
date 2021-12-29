@@ -190,10 +190,7 @@ function Profile() {
                                     value={company}
                                 />
 
-                                {changeDetails
-                                    ?
-                                    <></>
-                                    :
+                                {changeDetails &&
                                     <TextField
                                         id="description"
                                         label="About myself"
