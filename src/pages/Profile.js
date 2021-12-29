@@ -6,8 +6,6 @@ import { toast } from 'react-toastify'
 import { Page, Layout, Card, Avatar, FormLayout, TextField, Heading, Form, Button, Stack, DropZone, Banner, List, Thumbnail } from '@shopify/polaris'
 import { db } from '../firebase.config'
 import Spinner from '../components/Spinner'
-import { Editor } from 'react-draft-wysiwyg';
-import { EditorState } from 'draft-js';
 
 function Profile() {
     // Initializing State
@@ -62,7 +60,6 @@ function Profile() {
             </List>
         </Banner>
     );
-
 
     const handleDrop = useCallback(
         (_droppedFiles, acceptedFiles, rejectedFiles) => {
@@ -128,6 +125,7 @@ function Profile() {
         }
 
         let newImgUrl = imgUrl;
+
         if (files.length > 0) {
             newImgUrl = await Promise.all([...files].map((image) => uploadImageToFirestore(image)))
         }
@@ -188,13 +186,16 @@ function Profile() {
                             <FormLayout>
                                 {
                                     changeDetails &&
-                                    <Stack vertical>
-                                        {errorMessage}
-                                        <DropZone accept="image/*" type="image" label="add image" id="newImgUrl" allowMultiple={false} onDrop={handleDrop}>
-                                            {uploadedFiles}
-                                            {fileUpload}
-                                        </DropZone>
-                                    </Stack>
+                                    <>
+                                        <Stack vertical>
+                                            {errorMessage}
+                                            <DropZone accept="image/*" type="image" id="newImgUrl" allowMultiple={false} onDrop={handleDrop}>
+                                                {uploadedFiles}
+                                                {fileUpload}
+                                            </DropZone>
+                                        </Stack>
+                                    </>
+
                                 }
                                 <TextField
                                     id="title"
