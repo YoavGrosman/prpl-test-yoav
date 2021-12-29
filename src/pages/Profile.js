@@ -128,8 +128,9 @@ function Profile() {
 
         if (files.length > 0) {
             newImgUrl = await Promise.all([...files].map((image) => uploadImageToFirestore(image)))
+            newImgUrl = newImgUrl[0]
         }
-
+        console.log('newImgUrl:', newImgUrl)
         const formDataCopy = {
             ...formData,
             imgUrl: newImgUrl
