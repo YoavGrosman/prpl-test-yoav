@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { getDoc, collection, updateDoc, doc } from 'firebase/firestore'
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid'
+import { toast } from 'react-toastify'
 import { Page, Layout, Card, Avatar, FormLayout, TextField, Heading, Form, Button, Stack, DropZone, Banner, List, Thumbnail } from '@shopify/polaris'
 import { db } from '../firebase.config'
 import Spinner from '../components/Spinner'
@@ -81,6 +82,19 @@ function Profile() {
     const handleSubmit = async (e) => {
         setLoading(true)
 
+        // Validate phone numbers
+        const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+        const countryCodeRegex = /^(\+?\d{1,3}|\d{1,4})$/gm;
+
+        const isPhoneValid = phone.match(phoneRegex);
+        const isCountryCodeValid = countryCode.match(countryCodeRegex);
+
+        if (!isPhoneValid || !isCountryCodeValid) {
+            toast.error('Something wrong with the phone number you added');
+            setLoading(false)
+            return
+        }
+
         // Async function to upload user image to Firestore and get new image URL
         const uploadImageToFirestore = async (image) => {
             return new Promise((resolve, reject) => {
@@ -113,24 +127,27 @@ function Profile() {
             })
         }
 
-        // 
-        // const imgUrl = await Promise.all([...files].map((image) => uploadImageToFirestore(image)))
-        const imgUrl = await uploadImageToFirestore(files[0])
-        console.log(imgUrl)
-        const formDataCopy = {
-            ...formData,
-            imgUrl: imgUrl
+        let newImgUrl = imgUrl;
+        if (files.length > 0) {
+            newImgUrl = await Promise.all([...files].map((image) => uploadImageToFirestore(image)))
         }
 
+        const formDataCopy = {
+            ...formData,
+            imgUrl: newImgUrl
+        }
+
+        // Update db with new info
         const docRef = await updateDoc(doc(db, 'profiles', 'Y5JZiGK9O3se7JAMpbLP'), formDataCopy);
 
-        setFormData(formDataCopy)
+        // Set State
+        setFormData(formDataCopy);
         setChangeDetails(false);
-        setLoading(false)
+        setLoading(false);
+        setFiles([]);
     }
 
     useEffect(() => {
-
         const fetchProfile = async () => {
             try {
                 const docRef = doc(db, 'profiles', 'Y5JZiGK9O3se7JAMpbLP');
@@ -173,7 +190,7 @@ function Profile() {
                                     changeDetails &&
                                     <Stack vertical>
                                         {errorMessage}
-                                        <DropZone accept="image/*" type="image" label="add image" id="imgUrl" allowMultiple={false} onDrop={handleDrop}>
+                                        <DropZone accept="image/*" type="image" label="add image" id="newImgUrl" allowMultiple={false} onDrop={handleDrop}>
                                             {uploadedFiles}
                                             {fileUpload}
                                         </DropZone>
@@ -182,6 +199,8 @@ function Profile() {
                                 <TextField
                                     id="title"
                                     label="Job Title"
+                                    max="number"
+                                    maxLength={20}
                                     value={title}
                                     disabled={!changeDetails}
                                     onChange={onChange}
@@ -189,6 +208,8 @@ function Profile() {
                                 <TextField
                                     id="company"
                                     label="Current company"
+                                    max="number"
+                                    maxLength={20}
                                     onChange={onChange}
                                     autoComplete="off"
                                     disabled={!changeDetails}
@@ -203,7 +224,6 @@ function Profile() {
                                     disabled={!changeDetails}
                                     value={description}
                                 />
-
                                 <FormLayout.Group>
                                     <TextField
                                         id="countryCode"
