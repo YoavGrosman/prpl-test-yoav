@@ -11,7 +11,6 @@ import { EditorState } from 'draft-js';
 function Profile() {
     const [loading, setLoading] = useState(true);
     const [changeDetails, setChangeDetails] = useState(false);
-    const [editorState, setEditorState] = useState(EditorState.createWithContent(''))
 
     const [formData, setFormData] = useState({
         name: '',
@@ -131,10 +130,6 @@ function Profile() {
         setLoading(false)
     }
 
-    const onEditorStateChange = (editorState) => {
-        setEditorState(editorState)
-    }
-
     useEffect(() => {
 
         const fetchProfile = async () => {
@@ -197,13 +192,7 @@ function Profile() {
 
                                 {changeDetails
                                     ?
-                                    <Editor
-                                        wrapperClassName="wrapper-class"
-                                        editorClassName="editor-class"
-                                        toolbarClassName="toolbar-class"
-                                        editorState={editorState}
-                                        onEditorStateChange={onEditorStateChange}
-                                    />
+                                    <></>
                                     :
                                     <TextField
                                         id="description"
