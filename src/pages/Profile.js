@@ -174,13 +174,19 @@ function Profile() {
                                     changeDetails &&
                                     <Stack vertical>
                                         {errorMessage}
-                                        <DropZone accept="image/*" type="image" id="imgUrl" allowMultiple={false} onDrop={handleDrop}>
+                                        <DropZone accept="image/*" type="image" label="add image" id="imgUrl" allowMultiple={false} onDrop={handleDrop}>
                                             {uploadedFiles}
                                             {fileUpload}
                                         </DropZone>
                                     </Stack>
                                 }
-                                <TextField id="title" label="Job Title" value={title} disabled={!changeDetails} onChange={onChange} autoComplete="off" />
+                                <TextField
+                                    id="title"
+                                    label="Job Title"
+                                    value={title}
+                                    disabled={!changeDetails}
+                                    onChange={onChange}
+                                    autoComplete="off" />
                                 <TextField
                                     id="company"
                                     label="Current company"
@@ -189,38 +195,37 @@ function Profile() {
                                     disabled={!changeDetails}
                                     value={company}
                                 />
+                                <TextField
+                                    id="description"
+                                    label="About myself"
+                                    onChange={onChange}
+                                    autoComplete="off"
+                                    multiline={8}
+                                    disabled={!changeDetails}
+                                    value={description}
+                                />
 
-                                {changeDetails &&
+                                <FormLayout.Group>
                                     <TextField
-                                        id="description"
-                                        label="About myself"
+                                        id="countryCode"
+                                        prefix="+"
+                                        label="Country code"
+                                        value={countryCode}
                                         onChange={onChange}
                                         autoComplete="off"
-                                        multiline={8}
-                                        disabled
-                                        value={description}
+                                        disabled={!changeDetails}
                                     />
-                                }
-
-
-                                <TextField
-                                    id="countryCode"
-                                    prefix="+"
-                                    label="Country code"
-                                    value={countryCode}
-                                    onChange={onChange}
-                                    autoComplete="off"
-                                    disabled={!changeDetails}
-                                />
-                                <TextField
-                                    id="phone"
-                                    label="Phone"
-                                    type="tel"
-                                    value={phone}
-                                    onChange={onChange}
-                                    autoComplete="off"
-                                    disabled={!changeDetails}
-                                />
+                                    <TextField
+                                        id="phone"
+                                        label="Phone"
+                                        type="tel"
+                                        inputMode="tel"
+                                        value={phone}
+                                        onChange={onChange}
+                                        autoComplete="off"
+                                        disabled={!changeDetails}
+                                    />
+                                </FormLayout.Group>
 
                                 {
                                     changeDetails && <Button submit>UPDATE PROFILE</Button>
