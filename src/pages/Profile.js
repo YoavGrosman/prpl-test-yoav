@@ -9,9 +9,9 @@ import { Editor } from 'react-draft-wysiwyg';
 import { EditorState } from 'draft-js';
 
 function Profile() {
+    // Initializing State
     const [loading, setLoading] = useState(true);
     const [changeDetails, setChangeDetails] = useState(false);
-
     const [formData, setFormData] = useState({
         name: '',
         title: '',
@@ -24,11 +24,10 @@ function Profile() {
 
     const { name, title, company, description, imgUrl, phone, countryCode } = formData;
 
-    // Setting Dropzone configurations
+    // Setting Dropzone configurations - Polaris documentation
     const [files, setFiles] = useState([]);
     const [rejectedFiles, setRejectedFiles] = useState([]);
     const hasError = rejectedFiles.length > 0;
-
     const fileUpload = !files.length && <DropZone.FileUpload />;
 
     const uploadedFiles = files.length > 0 && (
@@ -62,6 +61,8 @@ function Profile() {
             </List>
         </Banner>
     );
+
+
     const handleDrop = useCallback(
         (_droppedFiles, acceptedFiles, rejectedFiles) => {
             setFiles((files) => [...files, ...acceptedFiles]);
@@ -77,22 +78,19 @@ function Profile() {
         }))
     }
 
-
     const handleSubmit = async (e) => {
         setLoading(true)
+
+        // Async function to upload user image to Firestore and get new image URL
         const uploadImageToFirestore = async (image) => {
             return new Promise((resolve, reject) => {
                 const fileName = `${image.name}-${uuidv4()}`
-
                 const storage = getStorage();
                 const storageRef = ref(storage, 'images' + fileName)
                 const uploadTask = uploadBytesResumable(storageRef, image)
 
                 uploadTask.on('state_changed',
                     (snapshot) => {
-                        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log('Upload is ' + progress + '% done');
                         switch (snapshot.state) {
                             case 'paused':
                                 console.log('Upload is paused');
@@ -106,8 +104,7 @@ function Profile() {
                         reject(error)
                     },
                     () => {
-                        // Handle successful uploads on complete
-                        // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                        // After upload is complete - return image URL
                         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                             resolve(downloadURL)
                         });
@@ -116,8 +113,10 @@ function Profile() {
             })
         }
 
-        const imgUrl = await Promise.all([...files].map((image) => uploadImageToFirestore(image)))
-        console.log(imgUrl);
+        // 
+        // const imgUrl = await Promise.all([...files].map((image) => uploadImageToFirestore(image)))
+        const imgUrl = await uploadImageToFirestore(files[0])
+        console.log(imgUrl)
         const formDataCopy = {
             ...formData,
             imgUrl: imgUrl
@@ -226,7 +225,6 @@ function Profile() {
                                         disabled={!changeDetails}
                                     />
                                 </FormLayout.Group>
-
                                 {
                                     changeDetails && <Button submit>UPDATE PROFILE</Button>
                                 }
