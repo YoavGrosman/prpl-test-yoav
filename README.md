@@ -1,6 +1,6 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Live demo of the project on Vercer - https://prpl-test-yoav.vercel.app 
 
 ## Available Scripts
 
