@@ -1,6 +1,6 @@
 # Getting Started with Create React App
 
-Live demo of the project on Vercer - https://prpl-test-yoav.vercel.app 
+Live demo of the project on Vercel - https://prpl-test-yoav.vercel.app 
 
 ## Available Scripts
 
